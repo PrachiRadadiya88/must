@@ -1,6 +1,6 @@
 const express = require('express')
 const mongoose  = require('mongoose')
-// mongoose.connect("mongodb+srv://HarshilJetani:987654321@cluster0.bq3ljih.mongodb.net/AppDB?retryWrites=true&w=majority");
+mongoose.connect("mongodb+srv://HarshilJetani:987654321@cluster0.bq3ljih.mongodb.net/AppDB?retryWrites=true&w=majority");
 const app = express();
 app.route("/").get((req,resp)=>{                        
     resp.json("first api")
