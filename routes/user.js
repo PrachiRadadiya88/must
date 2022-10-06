@@ -90,7 +90,7 @@ router.route("/delete/:username").delete((req, resp) => {
     });
 });
 
-router.route("/:username").get(async(req, resp) => {
+router.route("/checkuser/:username").get(async(req, resp) => {
 
     let {username} = req.params;
 
