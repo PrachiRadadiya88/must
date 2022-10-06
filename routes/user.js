@@ -90,7 +90,7 @@ router.route("/delete/:username").delete((req, resp) => {
     });
 });
 
-router.route("/checkuser/:username").get(async(req, resp) => {
+router.route("/:username").get(async(req, resp) => {
 
     let {username} = req.params;
 
@@ -101,5 +101,24 @@ router.route("/checkuser/:username").get(async(req, resp) => {
     
     return resp.status(500).json({ msg: user });
 });
+
+router.route("/checkusername/:username").get((req,resp)=>{
+    User.findOne({ username: req.params.username }, (err, result) => {
+                if (err) return resp.status(500).json({ msg: err });
+               if(result!==null)
+               {
+                return resp.json({
+                    status: true,
+                    
+                });
+               }
+               else{
+                return resp.json({
+                    status: false,
+                    
+                });
+               }
+            });
+})
 
 module.exports = router;
