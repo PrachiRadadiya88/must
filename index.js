@@ -1,6 +1,8 @@
 const express = require('express')
 const mongoose = require('mongoose')
 mongoose.connect("mongodb+srv://HarshilJetani:987654321@cluster0.bq3ljih.mongodb.net/AppDB?retryWrites=true&w=majority");
+const PORT = process.env.PORT || 5000;
+
 const app = express();
 // app.route("/").get((req,resp)=>{                        
 //     resp.json("first api")
@@ -20,4 +22,4 @@ app.get('/', (req, resp) => {
 })
 
 
-app.listen(5000, () => console.log("server is running on 5000")); 
+app.listen(PORT , () => console.log(`server is running on ${PORT}`)); 
