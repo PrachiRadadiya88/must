@@ -43,7 +43,7 @@ router.route("/login").post((req, resp) => {
 
 
 router.route("/register").post( async(req, resp) => {
-    console.log("inside the rigestation");
+    console.log("inside the rigestation--->>>>",req.body);
     if(req.body.username && req.body.password && req.body.email){
         const user = await User({
             username: req.body.username,
