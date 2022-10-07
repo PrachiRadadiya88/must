@@ -107,7 +107,7 @@ router.route("/:username").get(async (req, resp) => {
     return resp.status(500).json({ msg: user });
 });
 
-router.route("/checkusername/:email").get((req, resp) => {
+router.route("/checkmail/:email").get((req, resp) => {
     clogconsole.log("=========================================")
     User.findOne({ email: req.params.email }, (err, result) => {
         if (err) return resp.status(500).json({ msg: err });
