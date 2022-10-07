@@ -20,6 +20,6 @@ app.use("/user", userRoute);
 app.get('/', (req, resp) => {
     resp.json("first api")
 })
-
+ 
 
 app.listen(PORT , () => console.log(`server is running on ${PORT}`)); 
