@@ -42,14 +42,14 @@ router.route("/login").post((req, resp) => {
 })
 
 
-router.route("/register").post( async(req, resp) => {
-    console.log("inside the rigestation--->>>>",req.body);
-    if(req.body.username && req.body.password && req.body.email){
+router.route("/register").post(async (req, resp) => {
+    console.log("inside the rigestation--->>>>", req.body);
+    if (req.body.username && req.body.password && req.body.email) {
         const user = await User({
             username: req.body.username,
             password: req.body.password,
             email: req.body.email,
-    
+
         });
         await user
             .save()
@@ -60,10 +60,10 @@ router.route("/register").post( async(req, resp) => {
             .catch((err) => {
                 resp.status(403).json({ msg: err.msg });
             });
-    } else{
-        return resp.status(404).json({ msg: "All field required"});
+    } else {
+        return resp.status(404).json({ msg: "All field required" });
     }
-    
+
     // resp.json("registered");
 });
 
@@ -107,14 +107,14 @@ router.route("/:username").get(async (req, resp) => {
     return resp.status(500).json({ msg: user });
 });
 
-router.route("/checkmail/:email").get((req, resp) => {
-    clogconsole.log("=========================================")
+router.route("/checkmail/:email").get(async (req, resp) => {
+    // clogconsole.log("=========================================")
     User.findOne({ email: req.params.email }, (err, result) => {
         if (err) return resp.status(500).json({ msg: err });
         if (result !== null) {
             return resp.json({
                 status: true,
- 
+
             });
         }
         else
