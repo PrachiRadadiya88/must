@@ -4,7 +4,7 @@ const User = require("../models/user.model");
 const config = require("../config");
 const jwt = require("jsonwebtoken");
 const { application } = require("express");
-const middleware=require("../middleware")
+const middleware = require("../middleware")
 
 const router = express.Router();
 
@@ -23,7 +23,7 @@ router.route("/login").post((req, resp) => {
         if (err) return resp.status(500).json({ msg: err });
         if (result === null) {
             return resp.status(403).json("Either user name incoorct")
-        } 
+        }
         if (result.password === req.body.password) {
             //here we will implement the jwt token functionality
             let token = jwt.sign({ username: req.body.username }, config.key, {
@@ -33,7 +33,7 @@ router.route("/login").post((req, resp) => {
                 token: token,
                 "msg": "success",
 
-            }); 
+            });
         }
         else {
             resp.status(403).json("password incorrect");
@@ -90,35 +90,34 @@ router.route("/delete/:username").delete((req, resp) => {
     });
 });
 
-router.route("/:username").get(async(req, resp) => {
+router.route("/:username").get(async (req, resp) => {
 
-    let {username} = req.params;
+    let { username } = req.params;
 
     console.log(username);
-    let user =await User.findOne({username}).lean()
+    let user = await User.findOne({ username }).lean()
 
     console.log(user)
-    
+
     return resp.status(500).json({ msg: user });
 });
 
-router.route("/checkusername/:username").get((req,resp)=>{
+router.route("/checkusername/:username").get((req, resp) => {
     User.findOne({ username: req.params.username }, (err, result) => {
-                if (err) return resp.status(500).json({ msg: err });
-               if(result!==null)
-               {
-                return resp.json({
-                    status: true,
-                    
-                });
-               }
-               else{
-                return resp.json({
-                    status: false,
-                    
-                });
-               }
+        if (err) return resp.status(500).json({ msg: err });
+        if (result !== null) {
+            return resp.json({
+                status: true,
+
             });
+        }
+        else {
+            return resp.json({
+                status: false,
+
+            });
+        }
+    });
 })
 
 module.exports = router;
