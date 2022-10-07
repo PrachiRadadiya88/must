@@ -42,23 +42,28 @@ router.route("/login").post((req, resp) => {
 })
 
 
-router.route("/register").post((req, resp) => {
+router.route("/register").post( async(req, resp) => {
     console.log("inside the rigestation");
-    const user = new User({
-        username: req.body.username,
-        password: req.body.password,
-        email: req.body.email,
-
-    });
-    user
-        .save()
-        .then(() => {
-            console.log("user registerd");
-            resp.status(200).json("ok");
-        })
-        .catch((err) => {
-            resp.status(403).json({ msg: err });
+    if(req.body.username && req.body.password && req.body.email){
+        const user = await User({
+            username: req.body.username,
+            password: req.body.password,
+            email: req.body.email,
+    
         });
+        await user
+            .save()
+            .then(() => {
+                console.log("user registerd");
+                resp.status(200).json("ok");
+            })
+            .catch((err) => {
+                resp.status(403).json({ msg: err.msg });
+            });
+    } else{
+        return resp.status(404).json({ msg: "All field required"});
+    }
+    
     // resp.json("registered");
 });
 
@@ -102,22 +107,30 @@ router.route("/:username").get(async (req, resp) => {
     return resp.status(500).json({ msg: user });
 });
 
-// router.route("/checkusername/:username").get((req, resp) => {
-//     User.findOne({ username: req.params.username }, (err, result) => {
-//         if (err) return resp.status(500).json({ msg: err });
-//         if (result !== null) {
-//             return resp.json({
-//                 Status: true,
+router.route("/checkusername/:username").get((req, resp) => {
+    User.findOne({ username: req.params.username }, (err, result) => {
+        if (err) return resp.status(500).json({ msg: err });
+        if (result !== null) {
+            return resp.json({
+                Status: true,
 
-//             });
-//         }
-//         else {
-//             return resp.json({
-//                 Status: false,
+            });
+        }
+        else
+            return resp.json({
+                Status: false,
 
-//             });
-//         }
-//     });
-// })
+            });
+
+    });
+    // let { username } = req.params;
+
+    // console.log(username);
+    // let user = await User.findOne({ username }).lean()
+
+    // console.log(user)
+
+    // return resp.status(500).json({ msg: user });
+});
 
 module.exports = router;
