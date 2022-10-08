@@ -19,14 +19,14 @@ const router = express.Router();
 // });
 
 router.route("/login").post((req, resp) => {
-    User.findOne({ username: req.body.username }, (err, result) => {
+    User.findOne({ email: req.body.email }, (err, result) => {
         if (err) return resp.status(500).json({ msg: err });
         if (result === null) {
-            return resp.status(403).json("Either user name incoorct")
+            return resp.status(403).json("Either email incoorct")
         }
         if (result.password === req.body.password) {
             //here we will implement the jwt token functionality
-            let token = jwt.sign({ username: req.body.username }, config.key, {
+            let token = jwt.sign({ email: req.body.email }, config.key, {
                 expiresIn: "24h",
             });
             resp.json({
