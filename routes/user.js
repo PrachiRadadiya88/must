@@ -49,9 +49,9 @@ router.route("/login").post((req, resp) => {
 router.route("/register").post(async (req, resp) => {
     console.log("inside the rigestation--->>>>", req.body);
     const rl =  req.body.role
-    if(req.body.role === "Industry")
+    if(req.body.role == "Industry")
     {
-    if (req.body.username && req.body.password && req.body.email ) {
+    if (req.body.username && req.body.password && req.body.email && req.body.role ) {
         const user = await User({
             username: req.body.username,
             password: req.body.password,
