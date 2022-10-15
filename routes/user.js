@@ -48,15 +48,15 @@ router.route("/login").post((req, resp) => {
 
 router.route("/register").post(async (req, resp) => {
     console.log("inside the rigestation--->>>>", req.body);
-    const rl =  req.body.role
-    if(req.body.role === 'Industry')
-    {
-    if (req.body.username && req.body.password && req.body.email && req.body.role ) {
+    // const rl =  req.body.role
+    // if(req.body.role === 'Industry')
+    // {
+    if (req.body.username && req.body.password && req.body.email  ) {
         const user = await User({
             username: req.body.username,
             password: req.body.password,
             email: req.body.email,
-            role : req.body.role,
+            
         });
         await user
             .save()
@@ -70,11 +70,8 @@ router.route("/register").post(async (req, resp) => {
     } else {
         return resp.status(404).json({ msg: "All field required" });
     }
-}
-else
-{
-    console.log("indudtry is not getting as body")
-}
+
+
     // resp.json("registered");
 });
 

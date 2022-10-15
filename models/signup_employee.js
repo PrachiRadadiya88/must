@@ -14,12 +14,12 @@ const Emp = Schema({
         type: String,
         require: true,
         unique:true
-    },
-
-    role:{
-        type: String,
-        require: true,
     }
+
+    // role:{
+    //     type: String,
+    //     require: true,
+    // }
 
    
 });
