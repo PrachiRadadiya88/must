@@ -1,5 +1,5 @@
 const express = require("express");
-const { model } = require("mongoose");
+const { model } = require("../config/db1.config");
 const User = require("../models/user.model");
 const config = require("../config");
 const jwt = require("jsonwebtoken");
@@ -19,10 +19,12 @@ const router = express.Router();
 // });
 
 router.route("/login").post((req, resp) => {
+    // if(req.body.email != null && req.body.role==="Industry")
+    
     User.findOne({ email: req.body.email }, (err, result) => {
         if (err) return resp.status(500).json({ msg: err });
         if (result === null) {
-            return resp.status(403).json("Either email incoorct")
+            return resp.status(403).json("Either email incorrect")
         }
         if (result.password === req.body.password) {
             //here we will implement the jwt token functionality
@@ -38,18 +40,23 @@ router.route("/login").post((req, resp) => {
         else {
             resp.status(403).json("password incorrect");
         }
-    });
+    }
+
+    );
 })
 
 
 router.route("/register").post(async (req, resp) => {
     console.log("inside the rigestation--->>>>", req.body);
-    if (req.body.username && req.body.password && req.body.email) {
+    const rl =  req.body.role
+    if(req.body.role === "Industry")
+    {
+    if (req.body.username && req.body.password && req.body.email ) {
         const user = await User({
             username: req.body.username,
             password: req.body.password,
             email: req.body.email,
-
+            role : req.body.role,
         });
         await user
             .save()
@@ -63,6 +70,7 @@ router.route("/register").post(async (req, resp) => {
     } else {
         return resp.status(404).json({ msg: "All field required" });
     }
+}
 
     // resp.json("registered");
 });
