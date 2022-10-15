@@ -55,7 +55,7 @@ router.route("/register").post(async (req, resp) => {
         const user = await User({
             username: req.body.username,
             password: req.body.password,
-            email: req.body.email,
+            email: req.body.email
             
         });
         await user
