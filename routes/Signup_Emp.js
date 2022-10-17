@@ -33,4 +33,33 @@ router.route("/regist").post(async (req, resp) => {
 
     // resp.json("registered");
 });
+
+
+
+router.route("/checkmobile/:mobile").get(async (req, resp) => {
+    // clogconsole.log("=========================================")
+    Emp.findOne({ mobile: req.params.mobile }, (err, result) => {
+        if (err) return resp.status(500).json({ msg: err });
+        if (result !== null) {
+            return resp.json({
+                status: true,
+
+            });
+        }
+        else
+            return resp.json({
+                status: false,
+
+            });
+
+    });
+    // let { username } = req.params;
+
+    // console.log(username);
+    // let user = await User.findOne({ username }).lean()
+
+    // console.log(user)
+
+    // return resp.status(500).json({ msg: user });
+});
 module.exports = router;

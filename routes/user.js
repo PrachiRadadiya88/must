@@ -51,7 +51,7 @@ router.route("/register").post(async (req, resp) => {
     // const rl =  req.body.role
     // if(req.body.role === 'Industry')
     // {
-    if (req.body.username && req.body.password && req.body.email  ) {
+    if (req.body.username && req.body.password && req.body.email) {
         const user = await User({
             username: req.body.username,
             password: req.body.password,
