@@ -1,5 +1,5 @@
 const express = require("express");
-const { model } = require("../config/db1.config");
+// const { model } = require("../config/db1.config"); 
 const User = require("../models/user.model");
 const config = require("../config");
 const jwt = require("jsonwebtoken");

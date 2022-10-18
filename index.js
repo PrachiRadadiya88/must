@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express')
 const mongoose = require('mongoose')
-// let con1 = await mongoose.connect("mongodb+srv://HarshilJetani:987654321@cluster0.bq3ljih.mongodb.net/AppDB?retryWrites=true&w=majority");
+mongoose.connect("mongodb+srv://HarshilJetani:987654321@cluster0.bq3ljih.mongodb.net/AppDB?retryWrites=true&w=majority");
 // let con2 = await mongoose.connect("mongodb+srv://HarshilJetani:987654321@cluster0.bq3ljih.mongodb.net/AppDB?retryWrites=true&w=majority");
 const userRoute = require("./routes/user");
 const employeeRoue = require("./routes/Signup_Emp");

@@ -1,7 +1,7 @@
 const express = require("express");
 // const { model } = require("../config/db2.config");
 const Emp = require("../models/signup_employee");
-// const config = require("../config");
+const config = require("../config");
 const jwt = require("jsonwebtoken");
 const { application } = require("express");
 const middleware = require("../middleware");
