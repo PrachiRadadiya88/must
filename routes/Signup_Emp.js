@@ -33,7 +33,32 @@ router.route("/regist").post(async (req, resp) => {
 
     // resp.json("registered");
 });
+router.route("/login").post((req, resp) => {
+    // if(req.body.email != null && req.body.role==="Industry")
+    
+    Emp.findOne({ mobile: req.body.mobile }, (err, result) => {
+        if (err) return resp.status(500).json({ msg: err });
+        if (result === null) {
+            return resp.status(403).json("Either monbile incorrect")
+        }
+        if (result.password === req.body.password) {
+            //here we will implement the jwt token functionality
+            let token = jwt.sign({ email: req.body.email }, config.key, {
+                expiresIn: "24h",
+            });
+            resp.json({
+                token: token,
+                "msg": "success",
 
+            });
+        }
+        else {
+            resp.status(403).json("mobile incorrect");
+        }
+    }
+
+    );
+})
 
 
 router.route("/checkmobile/:mobile").get(async (req, resp) => {
