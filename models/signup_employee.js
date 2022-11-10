@@ -4,11 +4,7 @@ const Schema = mongoose.Schema;
 
 
 const Emp = Schema({
-    name:{
-        type: String,
-        require: true,
-      
-    },
+ 
 
     mobile:{
         type: String,
