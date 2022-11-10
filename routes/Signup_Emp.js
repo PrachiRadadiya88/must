@@ -35,7 +35,7 @@ router.route("/regist").post(async (req, resp) => {
 router.route("/login").post((req, resp) => {
     // if(req.body.email != null && req.body.role==="Industry")
     
-    User.findOne({ mobile: req.body.mobile }, (err, result) => {
+    Emp.findOne({ mobile: req.body.mobile }, (err, result) => {
         if (err) return resp.status(500).json({ msg: err });
         if (result === null) {
             return resp.status(403).json("Either mobile incorrect")
