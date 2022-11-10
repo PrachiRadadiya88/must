@@ -1,5 +1,5 @@
 const express = require("express");
-const { model } = require("../config/db2.config");
+
 const Emp = require("../models/signup_employee");
 const config = require("../config");
 const jwt = require("jsonwebtoken");

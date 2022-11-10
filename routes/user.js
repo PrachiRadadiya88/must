@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 const { application } = require("express");
 const middleware = require("../middleware")
 require('dotenv').config();
-const bcrypt=require("bcrypt");
+// const bcrypt=require("bcrypt");
 const router = express.Router();
 const nodemailer = require("nodemailer");
 var transporter=nodemailer.createTransport({
