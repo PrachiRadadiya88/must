@@ -1,5 +1,5 @@
 const express = require("express");
-// const { model } = require("../config/db2.config");
+const { model } = require("../config/db2.config");
 const Emp = require("../models/signup_employee");
 const config = require("../config");
 const jwt = require("jsonwebtoken");
@@ -12,11 +12,9 @@ const router = express.Router();
 
 router.route("/regist").post(async (req, resp) => {
     console.log("inside the rigestation--->>>>", req.body);
-    if (req.body.name && req.body.mobile) {
+    if (req.body.mobile) {
         const emp = await Emp({
-            name: req.body.name,
             mobile: req.body.mobile
-
         });
         await emp
             .save()
@@ -24,6 +22,7 @@ router.route("/regist").post(async (req, resp) => {
                 console.log("user registerd");
                 resp.status(200).json("ok");
             })
+
             .catch((err) => {
                 resp.status(403).json({ msg: err.msg });
             });
@@ -34,6 +33,9 @@ router.route("/regist").post(async (req, resp) => {
     // resp.json("registered");
 });
 
+router.route("/login").post(async(req,resp)=>{
+    
+})
 
 
 router.route("/checkmobile/:mobile").get(async (req, resp) => {
