@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.router();
 const UserOTPVerification=require("../models/UserOTPVerification")
-
 const express = require("express");
 // const { model } = require("../config/db1.config"); 
 const User = require("../models/user.model");
