@@ -28,6 +28,7 @@ var transporter=nodemailer.createTransport({
 //     });
 // });
 
+
 router.route("/login").post((req, resp) => {
     // if(req.body.email != null && req.body.role==="Industry")
     
@@ -49,7 +50,7 @@ router.route("/login").post((req, resp) => {
         }
         else {
             resp.status(403).json("password incorrect");
-        }
+        }  
     }
 
     );

@@ -29,5 +29,6 @@ app.get('/', (req, resp) => {
     resp.json("first api")
 })
 
-
-app.listen(PORT, () => console.log(`server is running on ${PORT}`)); 
+app.listen(PORT, () => {
+    console.log("server is running on port " + PORT);
+})
