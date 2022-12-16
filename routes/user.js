@@ -1,7 +1,10 @@
 const express = require("express");
 // const { model } = require("../config/db1.config"); 
 const User = require("../models/user.model");
-const UserOTPVerification=require("../models/UserOTPVerification")
+const IndustryCreatePro = require("../models/Create_Profile_model_industry");
+const UserOTPVerification = require("../models/UserOTPVerification")
+const AddPost = require("../models/AddPost_Industry");
+const EmployeeCreatePro = require("../models/Create_Profile_model_employee");
 const config = require("../config");
 const jwt = require("jsonwebtoken");
 const { application } = require("express");
@@ -10,14 +13,13 @@ require('dotenv').config();
 // const bcrypt=require("bcrypt");
 const router = express.Router();
 const nodemailer = require("nodemailer");
-var transporter=nodemailer.createTransport({
-    host:"smtp-mail.outlook.com",
-   auth:{
-        email:process.env.AUTH_EMAIL,
-        password:process.env.AUTH_PASSWORD,
-   },
+var transporter = nodemailer.createTransport({
+    host: "smtp-mail.outlook.com",
+    auth: {
+        email: process.env.AUTH_EMAIL,
+        password: process.env.AUTH_PASSWORD,
+    },
 });
-
 // router.route("/:username").get(middleware.checkToken,(req, resp) => {
 //     User.findOne({ username: req.params.username }, (err, result) => {
 //         if (err) return resp.status(500).json({ msg: err });
@@ -27,11 +29,8 @@ var transporter=nodemailer.createTransport({
 //         });
 //     });
 // });
-
-
 router.route("/login").post((req, resp) => {
     // if(req.body.email != null && req.body.role==="Industry")
-    
     User.findOne({ email: req.body.email }, (err, result) => {
         if (err) return resp.status(500).json({ msg: err });
         if (result === null) {
@@ -50,13 +49,10 @@ router.route("/login").post((req, resp) => {
         }
         else {
             resp.status(403).json("password incorrect");
-        }  
+        }
     }
-
     );
 })
-
-
 router.route("/register").post(async (req, resp) => {
     console.log("inside the rigestation--->>>>", req.body);
     // const rl =  req.body.role
@@ -67,33 +63,111 @@ router.route("/register").post(async (req, resp) => {
             username: req.body.username,
             password: req.body.password,
             email: req.body.email
-
-            
         });
-     const result=
-        await user
-            .save()
-            .then((result) => {
-                console.log("user registerd");
-                resp.status(200).json("ok");
-                //sendOTPVerificationEmail(result,resp);
-            })
-            .catch((err) => {
-                resp.status(403).json({ msg: err.msg });
-            });
+        const result =
+            await user
+                .save()
+                .then((result) => {
+                    console.log("user registerd");
+                    resp.status(200).json("ok");
+                    //sendOTPVerificationEmail(result,resp);
+                })
+                .catch((err) => {
+                    resp.status(403).json({ msg: err.msg });
+                });
     } else {
         return resp.status(404).json({ msg: "All field required" });
     }
-
-
     // resp.json("registered");
-    
-
+});
+router.route("/createpro").post(async (req, resp) => {
+    console.log("inside the create profile--->>>>", req.body);
+    try {
+        if (req.body.name && req.body.contact && req.body.email && req.body.desc && req.body.address && req.body.timefrom && req.body.timeto) {
+            const industrycreatepro = await new IndustryCreatePro(req.body).save();
+            return resp.status(200).json("ok");
+        }
+        return resp.status(404).json({ msg: "all field require" });
+    } catch (error) {
+        console.log(error, "error");
+    }
+    // } else if(req.body.name==null) {
+    //     return resp.status(404).json({ msg: "name required" });
+    // }
+    // else if(req.body.timefrom || req.body.timeto==null) {
+    //     return resp.status(404).json({ msg: "time required" });
+    // }
+    // else if(req.body.contact==null) {
+    //     return resp.status(404).json({ msg: "contact required" });
+    // }
+    // else if(req.body.email==null) {
+    //     return resp.status(404).json({ msg: "email required" });
+    // }
+    // else if(req.body.address==null) {
+    //     return resp.status(404).json({ msg: "address required" });
+    // }
+    // else if(req.body.desc==null) {
+    //     return resp.status(404).json({ msg: "desc required" });
+    // }
+    // resp.json("registered");
+});
+router.route("/empgetdata").get(async (req, resp) => {
+    console.log("=========================================")
+   let result = await EmployeeCreatePro.find()
+   return resp.json({
+    result: result,
+     });
+});
+router.route("/profileupdategetind").get(async (req, resp) => {
+    console.log("=========================================")
+   let result = await IndustryCreatePro.find()
+   return resp.json({
+    result: result,
+     });
+});
+router.route("/updateindprofile").post(async (req, resp) =>{
+     let result = await IndustryCreatePro.updateOne(//use here only update to update all data that have same name
+        {emil:req.body.email},{$set:{name:req.body.name,contact:req.body.contact,desc:req.body.desc,address:req.body.address,timefrom:req.body.timefrom,timeto:req.body.timeto,email:req.body.email}}
+    )
+    return resp.json({
+        result: result,
+         });
+});
+router.route("/addpost").post(async (req, resp) => {
+    console.log("inside the create profile--->>>>", req.body);
+    try {
+        if (req.body.name && req.body.contact && req.body.email && req.body.desc && req.body.address && req.body.timefrom && req.body.timeto && req.body.salary && req.body.reqworker && req.body.noworker && req.body.jobtype) {
+            const addpost = await new AddPost(req.body).save();
+            return resp.status(200).json("ok");
+        }
+        return resp.status(404).json({ msg: "all field require" });
+    } catch (error) {
+        console.log(error, "error");
+    }
+    // } else if(req.body.name==null) {
+    //     return resp.status(404).json({ msg: "name required" });
+    // }
+    // else if(req.body.timefrom || req.body.timeto==null) {
+    //     return resp.status(404).json({ msg: "time required" });
+    // }
+    // else if(req.body.contact==null) {
+    //     return resp.status(404).json({ msg: "contact required" });
+    // }
+    // else if(req.body.email==null) {
+    //     return resp.status(404).json({ msg: "email required" });
+    // }
+    // else if(req.body.address==null) {
+    //     return resp.status(404).json({ msg: "address required" });
+    // }
+    // else if(req.body.desc==null) {
+    //     return resp.status(404).json({ msg: "desc required" });
+    // }
+    // resp.json("registered");
 });
 // const sendOTPVerificationEmail=async({_id,email},resp)=>{
 //     try {
 //         const otp=`${Math.floor(1000+Math.random()*9000)}`
-        
+
 //         const mailOptions={
 //             from:process.env.AUTH_EMAIL,
 //             to:email,
@@ -226,15 +300,10 @@ router.route("/checkmail/:email").get(async (req, resp) => {
             });
 
     });
-    // let { username } = req.params;
 
-    // console.log(username);
-    // let user = await User.findOne({ username }).lean()
-
-    // console.log(user)
-
-    // return resp.status(500).json({ msg: user });
 });
+
+
 
 
 // const otpgenerator = require('otp-generator');
@@ -262,21 +331,16 @@ router.route("/checkmail/:email").get(async (req, resp) => {
 //     console.log(`Your OTP is ${otp}`);
 // //SEND SMS; 
 // return callback (null, fullHash);
-
 // }
-
 // async function verifyOTP(params,callback)
-
 // {
 //     let [hashValue,expires] = params.hash.split('.');
-
 //     let now = Date.now();
 //     if(now>parseInt(expires)) return callback("OtpExpires");
 //     let newCalculateHash = crypto
 //     .createHmac("sha256", key)
 //     .update(data)
 //     .digest("hex");
-
 //     if(newCalculateHash === hashValue)
 //     {
 //         return callback(null,"success")
@@ -284,13 +348,8 @@ router.route("/checkmail/:email").get(async (req, resp) => {
 //     return callback("invalid otp");
 // }
 // const controller = require('../controller')
-
-
-
 // router.post("/otpLogin",controller.otpLogin);
 // router.post("/verifyOtp",controller.verifyOtp);
-
-
 
 module.exports = router;
 

@@ -45,7 +45,7 @@ module.exports = mongoose.model("User", User);
 //         email : Joi.string().required(), 
     
 //     })
-//     return schema.validate(user);
+//     return schema.validate(user );
 // }
 
 // module.exports = {User,validate};
