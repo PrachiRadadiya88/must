@@ -11,12 +11,6 @@ const UserOTPVerificationSchema = Schema({
     otp:{
         type:String
     },
-    createAt:{
-        type:Date
-    },
-    expiresAt:{
-        type:Date
-    }
 });
 
 module.exports = mongoose.model(

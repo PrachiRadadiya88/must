@@ -13,13 +13,7 @@ require('dotenv').config();
 // const bcrypt=require("bcrypt");
 const router = express.Router();
 const nodemailer = require("nodemailer");
-var transporter = nodemailer.createTransport({
-    host: "smtp-mail.outlook.com",
-    auth: {
-        email: process.env.AUTH_EMAIL,
-        password: process.env.AUTH_PASSWORD,
-    },
-});
+
 // router.route("/:username").get(middleware.checkToken,(req, resp) => {
 //     User.findOne({ username: req.params.username }, (err, result) => {
 //         if (err) return resp.status(500).json({ msg: err });
@@ -29,6 +23,79 @@ var transporter = nodemailer.createTransport({
 //         });
 //     });
 // });
+router.route("/sendotp").post(async (req, resp) => {
+    const nodemailer = require('nodemailer');
+const otp=`${Math.floor(1000+Math.random()*9000)}`
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  host: 'smtp.gmail.com',
+  auth: {
+    user: 'harshilcbatch@gmail.com',
+    pass: 'khcbecmhdnfbfzwt'
+  }
+});
+
+const mailOptions = {
+  from: 'harshilcbatch@gmail.com',
+  to: req.body.email,
+  subject: 'One Time Password',
+  html:`<p>Enter <b>${otp}</b> in the app to verify your email address and complete the verfication</p><p>This code <b>Expires in 1 hour</b>.</p>`,
+
+};
+
+transporter.sendMail(mailOptions, function(error, info){
+  if (error) {
+ console.log(error);
+  } else {
+    console.log('Email sent: ' + info.response);
+    // do something useful
+  }
+});
+if (req.body.email && otp ) {
+    const userOTPVerification = await UserOTPVerification({
+        email: req.body.email,
+        otp: otp,
+       
+    });
+    const result =
+        await userOTPVerification
+            .save()
+            .then((result) => {
+                console.log("otp saved successfully");
+                resp.status(200).json("ok");
+                //sendOTPVerificationEmail(result,resp);
+            })
+            .catch((err) => {
+                resp.status(403).json({ msg: err.msg });
+            });
+} else {
+    return resp.status(404).json({ msg: "All field required" });
+}
+});
+
+router.route("/verifyotp").post((req, resp) => {
+    UserOTPVerification.findOne({ email: req.body.email }, (err, result) => {
+        if (err) return resp.status(500).json({ msg: err });
+        if (result === null) {
+            return resp.status(403).json("Either email incorrect")
+        }
+        if (result.otp === req.body.otp) {
+            //here we will implement the jwt token functionality
+            let token = jwt.sign({ email: req.body.email }, config.key, {
+                expiresIn: "24h",
+            });
+            resp.json({
+                token: token,
+                "msg": "success",
+
+            });
+        }
+        else {
+            resp.status(403).json("password incorrect");
+        }
+    }
+    );
+});
 router.route("/login").post((req, resp) => {
     // if(req.body.email != null && req.body.role==="Industry")
     User.findOne({ email: req.body.email }, (err, result) => {

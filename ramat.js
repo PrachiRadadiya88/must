@@ -1,38 +1,26 @@
+const nodemailer = require('nodemailer');
+const otp=`${Math.floor(1000+Math.random()*9000)}`
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  host: 'smtp.gmail.com',
+  auth: {
+    user: 'harshilcbatch@gmail.com',
+    pass: 'khcbecmhdnfbfzwt'
+  }
+});
 
-// const hi =00 require('./routes/qq.js');
-// console.log(hi)
+const mailOptions = {
+  from: 'harshilcbatch@gmail.com',
+  to: 'radadiyaprachi048@gmail.com',
+  subject: 'One Time Password',
+  html:`<p>Enter <b>${otp}</b> in the app to verify your email address and complete the verfication</p><p>This code <b>Expires in 1 hour</b>.</p>`,
+};
 
-function demo()
-{
-    console.log("hello");
-    console.log("creae a function")
-console.log("hi")
-
-var hii = "hello"
-console.log("funaction called")
-console.log("hello guys")
-console.log(hii)
-let i=0
-for(i=0;i<=10;i++)
-{
-console.log(i)
-}
-console.log("hihiiiiiiiiiiiii")
-for(i=0;i<3;i++)
-{
-    console.log(i)
-}
-while(1)
-{
-console.log("__");
-}
-console.log("__");
-}
-demo();
-
-// console.log(i) 
-// while(1)
-// { 
-//     console.log("hi")
-// }
-
+transporter.sendMail(mailOptions, function(error, info){
+  if (error) {
+ console.log(error);
+  } else {
+    console.log('Email sent: ' + info.response);
+    // do something useful
+  }
+});
