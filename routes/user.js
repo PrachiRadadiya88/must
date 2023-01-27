@@ -55,7 +55,7 @@ if (req.body.email && otp ) {
     const userOTPVerification = await UserOTPVerification({
         email: req.body.email,
         otp: otp,
-       
+       expire: Date.now() + 40000,
     });
     const result =
         await userOTPVerification
@@ -71,16 +71,26 @@ if (req.body.email && otp ) {
 } else {
     return resp.status(404).json({ msg: "All field required" });
 }
+
+
 });
 
-router.route("/verifyotp").post((req, resp) => {
-    UserOTPVerification.findOne({ email: req.body.email }, (err, result) => {
+router.route("/verifyotp").post( (req, resp) => {
+    console.log("inside the rigestation--->>>>", req.body);
+    UserOTPVerification.findOne( { email: req.body.email }, (err, result) => {
+        
         if (err) return resp.status(500).json({ msg: err });
         if (result === null) {
             return resp.status(403).json("Either email incorrect")
         }
+       
         if (result.otp === req.body.otp) {
             //here we will implement the jwt token functionality
+            if(result.expire < Date.now()) {
+                UserOTPVerification.deleteMany({email:req.body.email});
+            //    throw new Error("Code has expired.Please request again."); 
+            return resp.status(400).json("Code has expired.Please request again.")
+            }
             let token = jwt.sign({ email: req.body.email }, config.key, {
                 expiresIn: "24h",
             });
@@ -93,6 +103,7 @@ router.route("/verifyotp").post((req, resp) => {
         else {
             resp.status(403).json("password incorrect");
         }
+        
     }
     );
 });
