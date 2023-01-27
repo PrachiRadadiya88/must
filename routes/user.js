@@ -52,15 +52,17 @@ transporter.sendMail(mailOptions, function(error, info){
   }
 });
 if (req.body.email && otp ) {
+    await UserOTPVerification.deleteMany({email:req.body.email});
     const userOTPVerification = await UserOTPVerification({
         email: req.body.email,
         otp: otp,
-       expire: Date.now() + 40000,
+       expire: Date.now() + 112500,
     });
     const result =
         await userOTPVerification
             .save()
             .then((result) => {
+                console.log("otp saved successfully", result);
                 console.log("otp saved successfully");
                 resp.status(200).json("ok");
                 //sendOTPVerificationEmail(result,resp);
@@ -75,19 +77,23 @@ if (req.body.email && otp ) {
 
 });
 
-router.route("/verifyotp").post( (req, resp) => {
+router.route("/verifyotp").post( async (req, resp) => {
     console.log("inside the rigestation--->>>>", req.body);
-    UserOTPVerification.findOne( { email: req.body.email }, (err, result) => {
-        
+    UserOTPVerification.findOne( { email: req.body.email },async (err, result) => {
+        console.log("inside the rigestation--->>>>", result);
         if (err) return resp.status(500).json({ msg: err });
         if (result === null) {
             return resp.status(403).json("Either email incorrect")
         }
-       
         if (result.otp === req.body.otp) {
             //here we will implement the jwt token functionality
+            console.log(
+                new Date(result.expire).toLocaleString() ,
+                "--------",
+                 new Date().toLocaleString()
+            )
             if(result.expire < Date.now()) {
-                UserOTPVerification.deleteMany({email:req.body.email});
+                await UserOTPVerification.deleteMany({email:req.body.email});
             //    throw new Error("Code has expired.Please request again."); 
             return resp.status(400).json("Code has expired.Please request again.")
             }
