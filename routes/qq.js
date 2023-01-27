@@ -66,6 +66,7 @@ router.post("/verifyOTP",async(req,resp)=>{
         if(!email || !otp){
             throw Error("Empty otp details are not allowed "); 
         }else{
+            
             const UserOTPVerificationRecords=await UserOTPVerification.find({
                 email,
             });
