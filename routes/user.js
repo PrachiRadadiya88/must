@@ -95,7 +95,7 @@ router.route("/verifyotp").post( async (req, resp) => {
             if(result.expire < Date.now()) {
                 await UserOTPVerification.deleteMany({email:req.body.email});
             //    throw new Error("Code has expired.Please request again."); 
-            return resp.status(400).json("Code has expired.Please request again.")
+            return resp.status(400).json({"msg":"Code has expired.Please request again."})
             }
             let token = jwt.sign({ email: req.body.email }, config.key, {
                 expiresIn: "24h",
