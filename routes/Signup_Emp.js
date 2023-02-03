@@ -9,6 +9,7 @@ const jwt = require("jsonwebtoken");
 const { application } = require("express");
 const middleware = require("../middleware");
 const signup_employee = require("../models/signup_employee");
+const { json } = require("body-parser");
 
 const router = express.Router();
 
@@ -56,6 +57,8 @@ router.route("/updateempprofile").post(async (req, resp) =>{
         });
 });
 router.route("/createproemp").post(async (req, resp) => {
+    if(typeof req.body.skills === "string")
+    req.body.skills=JSON.parse(req.body.skills)
     console.log("inside the create profile--->>>>", req.body);
 
     try {
