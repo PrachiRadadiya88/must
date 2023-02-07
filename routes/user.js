@@ -220,6 +220,12 @@ router.route("/updateindprofile").post(async (req, resp) =>{
 router.route("/addpost").post(async (req, resp) => {
     console.log("inside the create profile--->>>>", req.body);
     try {
+        if(typeof req.body.req.body.reqworker === "string") 
+        //convert skill to array
+        req.body.req.body.reqworker = JSON.parse(req.body.req.body.reqworker);
+
+        console.log("inside the create profile--->>>>", req.body);
+
         if (req.body.name && req.body.contact && req.body.email && req.body.desc && req.body.address && req.body.timefrom && req.body.timeto && req.body.salary && req.body.reqworker && req.body.noworker && req.body.jobtype) {
             const addpost = await new AddPost(req.body).save();
             return resp.status(200).json("ok");

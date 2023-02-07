@@ -57,10 +57,12 @@ router.route("/updateempprofile").post(async (req, resp) =>{
         });
 });
 router.route("/createproemp").post(async (req, resp) => {
-    if(typeof req.body.skills === "string")
-    req.body.skills=JSON.parse(req.body.skills)
     console.log("inside the create profile--->>>>", req.body);
-
+    if(typeof req.body.skills === "string") 
+    //convert skill to array
+    req.body.skills = JSON.parse(req.body.skills);
+    
+    console.log("inside the create profile--->>>>", req.body);
     try {
         if (req.body.name && req.body.contact && req.body.email && req.body.desc && req.body.address && req.body.currentplace && req.body.skills && req.body.contact2) {
             const employeecreatepro = await new EmployeeCreatePro(req.body).save();

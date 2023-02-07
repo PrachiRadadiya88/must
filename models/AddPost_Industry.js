@@ -8,7 +8,7 @@ const AddPost = Schema({
     name:{
         type: String,
         require: true,
-        unique: true,
+       
     },
     address:{
         type: String,
@@ -17,7 +17,7 @@ const AddPost = Schema({
     contact:{
         type: Number,
         require: true,
-        unique: true,
+       
     },
     reqworker:{
         type: String,
@@ -50,7 +50,6 @@ const AddPost = Schema({
     email:{
         type: String,
         require: true,
-        unique: true,
     },
 
 });
