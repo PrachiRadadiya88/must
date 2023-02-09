@@ -64,9 +64,12 @@ router.route("/profilegetemp/:contact").get(async (req, resp) => {
 });
 
 router.route("/updateempprofile").post(async (req, resp) =>{
+    if(typeof req.body.skills === "string") 
+    //convert skill to array
+    req.body.skills = JSON.parse(req.body.skills);
 
     let result = await EmployeeCreatePro.updateOne(//use here only update to update all data that have same name
-       {contact:req.body.contact},{$set:{name:req.body.name,contact:req.body.contact,contact2:req.body.contact2,email:req.body.email,desc:req.body.desc,address:req.body.address,currentplace:req.body.currentplace,skills:req.body.skills}}
+       {contact:req.body.contact},{$set:{name:req.body.name,contact2:req.body.contact2,email:req.body.email,desc:req.body.desc,address:req.body.address,currentplace:req.body.currentplace,skills:req.body.skills}}
    )
    return resp.json({
        result: result,
