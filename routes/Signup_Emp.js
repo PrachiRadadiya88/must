@@ -47,6 +47,22 @@ router.route("/indgetdata").get(async (req, resp) => {
 
 
 });
+router.route("/profilegetemp/:contact").get(async (req, resp) => {
+    // clogconsole.log("=========================================")
+   let result = await  EmployeeCreatePro.findOne({ contact: req.params.contact });
+    return resp.json({
+        result: result,
+    });
+    // let { username } = req.params;
+
+    // console.log(username);
+    // let user = await User.findOne({ username }).lean()
+
+    // console.log(user)
+
+    // return resp.status(500).json({ msg: user });
+});
+
 router.route("/updateempprofile").post(async (req, resp) =>{
 
     let result = await EmployeeCreatePro.updateOne(//use here only update to update all data that have same name

@@ -206,12 +206,13 @@ router.route("/profileupdategetind").get(async (req, resp) => {
     console.log("=========================================")
    let result = await IndustryCreatePro.find()
    return resp.json({
-    result: result,
+    result:result,
      });
 });
+
 router.route("/updateindprofile").post(async (req, resp) =>{
      let result = await IndustryCreatePro.updateOne(//use here only update to update all data that have same name
-        {emil:req.body.email},{$set:{name:req.body.name,contact:req.body.contact,desc:req.body.desc,address:req.body.address,timefrom:req.body.timefrom,timeto:req.body.timeto,email:req.body.email}}
+        {emil:req.body.email},{$set:{name:req.body.name,contact:req.body.contact,desc:req.body.desc,address:req.body.address,timefrom:req.body.timefrom,timeto:req.body.timeto}}
     )
     return resp.json({
         result: result,
@@ -220,9 +221,9 @@ router.route("/updateindprofile").post(async (req, resp) =>{
 router.route("/addpost").post(async (req, resp) => {
     console.log("inside the create profile--->>>>", req.body);
     try {
-        if(typeof req.body.req.body.reqworker === "string") 
+        // if(typeof req.body.req.body.reqworker === "string") 
         //convert skill to array
-        req.body.req.body.reqworker = JSON.parse(req.body.req.body.reqworker);
+        // req.body.req.body.reqworker = JSON.parse(req.body.req.body.reqworker);
 
         console.log("inside the create profile--->>>>", req.body);
 
@@ -333,6 +334,29 @@ router.route("/addpost").post(async (req, resp) => {
 //     }
 // });
 
+router.route("/empgetdata").get(async (req, resp) => {
+    console.log("=========================================")
+   let result = await EmployeeCreatePro.find()
+   return resp.json({
+    result: result,
+     });
+});
+
+router.route("/profilegetind/:mail").get(async (req, resp) => {
+    // clogconsole.log("=========================================")
+   let result = await  IndustryCreatePro.findOne({ email: req.params.mail });
+    return resp.json({
+        result: result,
+    });
+    // let { username } = req.params;
+
+    // console.log(username);
+    // let user = await User.findOne({ username }).lean()
+
+    // console.log(user)
+
+    // return resp.status(500).json({ msg: user });
+});
 
 router.route("/update/:username").patch((req, resp) => {
     User.findOneAndUpdate(

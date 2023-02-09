@@ -7,8 +7,7 @@ const Schema = mongoose.Schema;
 const AddPost = Schema({
     name:{
         type: String,
-        require: true,
-       
+        require: true, 
     },
     address:{
         type: String,
@@ -17,7 +16,6 @@ const AddPost = Schema({
     contact:{
         type: Number,
         require: true,
-       
     },
     reqworker:{
         type: String,
