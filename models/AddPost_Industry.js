@@ -55,3 +55,6 @@ const AddPost = Schema({
 
 
 module.exports = mongoose.model("AddPost",AddPost);
+
+
+

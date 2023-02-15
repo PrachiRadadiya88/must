@@ -45,6 +45,11 @@ const EmployeeCreatePro = Schema({
     skills:{
         type: Array,
         require: true,
+    },
+    year:{
+    
+        type: String,
+        require: true,
     }
 
 

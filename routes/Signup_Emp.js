@@ -42,7 +42,7 @@ router.route("/indgetdata").get(async (req, resp) => {
    let result = await AddPost.find()
 
    return resp.json({
-    result: result,
+   result:result,
      });
 
 
@@ -83,7 +83,7 @@ router.route("/createproemp").post(async (req, resp) => {
     
     console.log("inside the create profile--->>>>", req.body);
     try {
-        if (req.body.name && req.body.contact && req.body.email && req.body.desc && req.body.address && req.body.currentplace && req.body.skills && req.body.contact2) {
+        if (req.body.name && req.body.contact && req.body.email && req.body.desc && req.body.address && req.body.currentplace && req.body.skills && req.body.contact2 && req.body.year) {
             const employeecreatepro = await new EmployeeCreatePro(req.body).save();
             return resp.status(200).json("ok");
 
