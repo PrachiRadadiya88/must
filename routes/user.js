@@ -39,7 +39,7 @@ const mailOptions = {
   from: 'harshilcbatch@gmail.com',
   to: req.body.email,
   subject: 'One Time Password',
-  html:`<p>Enter <b>${otp}</b> in the app to verify your email address and complete the verfication</p><p>This code <b>Expires in 1 hour</b>.</p>`,
+  html:`<p>Enter </br><b>OTP:${otp}</b> </br>       in the app to verify your email address and complete the verfication</p><p>This code <b>Expires in 2 minute</b>.</p>`,
 
 };
 
@@ -56,7 +56,7 @@ if (req.body.email && otp ) {
     const userOTPVerification = await UserOTPVerification({
         email: req.body.email,
         otp: otp,
-       expire: Date.now() + 112500,
+       expire: Date.now() + 180000,
     });
     const result =
         await userOTPVerification
