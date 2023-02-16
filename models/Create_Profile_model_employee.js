@@ -50,6 +50,10 @@ const EmployeeCreatePro = Schema({
     
         type: String,
         require: true,
+    },
+    salary:{
+        type: String,
+        require: true,
     }
 
 

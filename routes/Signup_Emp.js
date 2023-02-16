@@ -83,7 +83,7 @@ router.route("/createproemp").post(async (req, resp) => {
     
     console.log("inside the create profile--->>>>", req.body);
     try {
-        if (req.body.name && req.body.contact && req.body.email && req.body.desc && req.body.address && req.body.currentplace && req.body.skills && req.body.contact2 && req.body.year) {
+        if (req.body.name && req.body.contact && req.body.email && req.body.desc && req.body.address && req.body.currentplace && req.body.skills && req.body.contact2 && req.body.year && req.body.salary) {
             const employeecreatepro = await new EmployeeCreatePro(req.body).save();
             return resp.status(200).json("ok");
 

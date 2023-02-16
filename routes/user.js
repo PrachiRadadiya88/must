@@ -227,7 +227,7 @@ router.route("/addpost").post(async (req, resp) => {
 
         console.log("inside the create profile--->>>>", req.body);
 
-        if (req.body.name && req.body.contact && req.body.email && req.body.desc && req.body.address && req.body.timefrom && req.body.timeto && req.body.salary && req.body.reqworker && req.body.noworker && req.body.jobtype) {
+        if (req.body.x && req.body.contact && req.body.email && req.body.desc && req.body.address && req.body.timefrom && req.body.timeto && req.body.salary && req.body.reqworker && req.body.noworker && req.body.jobtype) {
             const addpost = await new AddPost(req.body).save();
             return resp.status(200).json("ok");
         }
