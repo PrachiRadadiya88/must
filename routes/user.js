@@ -39,7 +39,7 @@ const mailOptions = {
   from: 'harshilcbatch@gmail.com',
   to: req.body.email,
   subject: 'One Time Password',
-  html:`<p>Enter </br><b>OTP:${otp}</b> </br>       in the app to verify your email address and complete the verfication</p><p>This code <b>Expires in 2 minute</b>.</p>`,
+  html:`<p>Enter </br><b>OTP:${otp}</b> </br>       in the app to verify your email address and complete the verfication</p><p>This code <b>Expires in 3 minute</b>.</p>`,
 
 };
 
