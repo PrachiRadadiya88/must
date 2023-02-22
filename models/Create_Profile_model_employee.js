@@ -25,7 +25,6 @@ const EmployeeCreatePro = Schema({
         type: String,
         require: true,
         unique: true,
-      
     },
 
     desc:{
@@ -47,7 +46,6 @@ const EmployeeCreatePro = Schema({
         require: true,
     },
     year:{
-    
         type: String,
         require: true,
     },

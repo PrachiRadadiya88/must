@@ -13,6 +13,13 @@ require('dotenv').config();
 // const bcrypt=require("bcrypt");
 const router = express.Router();
 const nodemailer = require("nodemailer");
+// const bodyparser = require("body-parser");
+// app.use(bodyparser.json())
+// var admin = require("firebase-admin");
+// var fcm = require("fcm");
+// var serviceAccount = require("../config/push-notification-key.json");
+// const certPath = admin.credential.cert(serviceAccount);
+// var FCM = new fcm(certPath);
 
 // router.route("/:username").get(middleware.checkToken,(req, resp) => {
 //     User.findOne({ username: req.params.username }, (err, result) => {
@@ -23,6 +30,81 @@ const nodemailer = require("nodemailer");
 //         });
 //     });
 // });
+
+var admin = require("firebase-admin");
+
+var serviceAccount = require("../config/push-notification-key.json");
+
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+    // databaseURL: "https://push-notification-1c1f5.firebaseio.com"
+
+})
+
+
+const notification_options = {
+    priority: "high",
+    timeToLive: 60 * 60 * 24
+  };
+
+
+
+
+  router.route("/notification").post(async (req, resp) => {
+
+    const  registrationToken = req.body.registrationToken
+    const message = {
+        notification: {
+          title: req.body.title,
+          body: req.body.body
+        },
+      };
+    const options =  notification_options
+    
+      admin.messaging().sendToDevice(registrationToken, message, options)
+      .then( response => {
+        console.log("Notification sent", response)
+       resp.status(200).send("Notification sent successfully")
+       
+      })
+      .catch( error => {
+          console.log(error);
+      });
+
+
+  });
+
+
+
+
+
+
+
+
+
+router.route("/sendotp").post(async (req, resp) => {
+
+
+ 
+    
+      admin.messaging().sendToDevice(registrationToken, message, options)
+      .then( response => {
+
+       res.status(200).send("Notification sent successfully")
+       
+      })
+      .catch( error => {
+          console.log(error);
+      });
+
+});
+
+
+//  const router = express.Router();
+
+
+
 router.route("/sendotp").post(async (req, resp) => {
     const nodemailer = require('nodemailer');
 const otp=`${Math.floor(1000+Math.random()*9000)}`
@@ -227,7 +309,7 @@ router.route("/addpost").post(async (req, resp) => {
 
         console.log("inside the create profile--->>>>", req.body);
 
-        if (req.body.x && req.body.contact && req.body.email && req.body.desc && req.body.address && req.body.timefrom && req.body.timeto && req.body.salary && req.body.reqworker && req.body.noworker && req.body.jobtype) {
+        if (req.body.name && req.body.contact && req.body.email && req.body.desc && req.body.address && req.body.timefrom && req.body.timeto && req.body.salary && req.body.reqworker && req.body.noworker && req.body.jobtype) {
             const addpost = await new AddPost(req.body).save();
             return resp.status(200).json("ok");
         }

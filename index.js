@@ -22,13 +22,13 @@ connection.once("open", () => {
 app.use(express.json());
 app.use("/emp", employeeRoue);
 app.use("/user", userRoute);
-
+// app.use("/api/notification".require("./routes/notification"));
 //app.use("/emp", employeeRoue);
 app.get('/', (req, resp) => {
     console.log(req)
     resp.json("first api")
 })
 
-app.listen(PORT, () => {
-    console.log("server is running on port " + PORT);
+app.listen(4600, () => {
+    console.log("server is running on port " + 4600);
 })
