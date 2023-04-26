@@ -8,7 +8,7 @@ const EmployeeCreatePro = Schema({
     name:{
         type: String,
         require: true,
-        unique: true,
+       
       
     },
     contact :{
@@ -34,7 +34,7 @@ const EmployeeCreatePro = Schema({
     address:{
         type: String,
         require: true,
-        unique: true,
+      
     },
 
     currentplace:{

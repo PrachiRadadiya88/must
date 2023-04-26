@@ -3,8 +3,15 @@ const express = require("express");
 const User = require("../models/user.model");
 const IndustryCreatePro = require("../models/Create_Profile_model_industry");
 const UserOTPVerification = require("../models/UserOTPVerification")
+const NotificationInsert = require("../models/NotificationInsert");
+
+const NotificationIndustry = require("../models/NotificationIndustry");
+const Applied = require("../models/Applied");
+const JoinData = require("../models/Create_Join_Data");
 const AddPost = require("../models/AddPost_Industry");
 const EmployeeCreatePro = require("../models/Create_Profile_model_employee");
+
+
 const config = require("../config");
 const jwt = require("jsonwebtoken");
 const { application } = require("express");
@@ -37,7 +44,7 @@ var serviceAccount = require("../config/push-notification-key.json");
 
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+    credential: admin.credential.cert(serviceAccount),
     // databaseURL: "https://push-notification-1c1f5.firebaseio.com"
 
 })
@@ -46,59 +53,117 @@ admin.initializeApp({
 const notification_options = {
     priority: "high",
     timeToLive: 60 * 60 * 24
-  };
+};
 
 
 
 
-  router.route("/notification").post(async (req, resp) => {
+router.route("/notification").post(async (req, resp) => {
 
-    const  registrationToken = req.body.registrationToken
+    const registrationToken = req.body.registrationToken
     const message = {
         notification: {
-          title: req.body.title,
-          body: req.body.body
+            title: req.body.title,
+            body: req.body.body
         },
-      };
-    const options =  notification_options
-    
-      admin.messaging().sendToDevice(registrationToken, message, options)
-      .then( response => {
-        console.log("Notification sent", response)
-       resp.status(200).send("Notification sent successfully")
-       
-      })
-      .catch( error => {
-          console.log(error);
-      });
+    };
+    const options = notification_options
 
+    admin.messaging().sendToDevice(registrationToken, message, options)
+        .then(response => {
+            console.log("Notification sent", response)
+            resp.status(200).send("Notification sent successfully")
 
-  });
+        })
+        .catch(error => {
+            console.log(error);
+        });
 
-
-
-
-
-
-
-
-
-router.route("/sendotp").post(async (req, resp) => {
-
-
- 
-    
-      admin.messaging().sendToDevice(registrationToken, message, options)
-      .then( response => {
-
-       res.status(200).send("Notification sent successfully")
-       
-      })
-      .catch( error => {
-          console.log(error);
-      });
 
 });
+
+
+
+
+router.route('/storenotification').post(async (req, resp) => {
+
+    console.log("inside the create profile--->>>>", req.body);
+    // if(typeof req.body.body === "string") 
+    // //convert skill to array
+    // req.body.body = JSON.parse(req.body.body);
+    try {
+        if (req.body.email && req.body.body && req.body.title) {
+            const notificationInsert = await new NotificationInsert(req.body).save();
+            return resp.status(200).json("ok");
+        }
+        return resp.status(404).json({ msg: "all field require" });
+    } catch (error) {
+        console.log(error, "error");
+    }
+
+});
+
+router.route("/getnotification/:email").get(async (req, resp) => {
+   console.log("start notification");
+    let result = await NotificationInsert.find({ email: req.params.email });
+    return resp.json({
+        result: result,
+    });
+
+    console.log("end notification");
+
+});
+
+
+
+router.route("/getindustrypostcollection/:email").get(async (req, resp) => {
+    console.log("start notification");
+     let result = await AddPost.find({ email: req.params.email });
+     return resp.json({
+         result: result,
+     });
+ 
+     console.log("end notification");
+ 
+ });
+
+
+ router.route("/deletepost").post(async (req, resp) => {
+    console.log("start delete");
+    // console.log(req.params._id);
+     let result = await AddPost.deleteOne({ _id: req.body._id });
+     console.log("deleted");
+     return resp.json({
+         result: result,
+     });
+ 
+  
+ 
+ });
+
+
+
+
+
+//  router.route('/storenotificationindustry').post(async (req, resp) => {
+
+//     console.log("inside the create profile--->>>>", req.body);
+//     try {
+//         if (req.body.contact && req.body.body && req.body.title) {
+//             const notificationIndustry = await new NotificationIndustry(req.body).save();
+//             return resp.status(200).json("ok");
+//         }
+//         return resp.status(404).json({ msg: "all field require" });
+//     } catch (error) {
+//         console.log(error, "error");
+//     }
+
+// });
+
+
+
+
+
 
 
 //  const router = express.Router();
@@ -107,61 +172,61 @@ router.route("/sendotp").post(async (req, resp) => {
 
 router.route("/sendotp").post(async (req, resp) => {
     const nodemailer = require('nodemailer');
-const otp=`${Math.floor(1000+Math.random()*9000)}`
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  host: 'smtp.gmail.com',
-  auth: {
-    user: 'harshilcbatch@gmail.com',
-    pass: 'khcbecmhdnfbfzwt'
-  }
-});
-
-const mailOptions = {
-  from: 'harshilcbatch@gmail.com',
-  to: req.body.email,
-  subject: 'One Time Password',
-  html:`<p>Enter </br><b>OTP:${otp}</b> </br>       in the app to verify your email address and complete the verfication</p><p>This code <b>Expires in 3 minute</b>.</p>`,
-
-};
-
-transporter.sendMail(mailOptions, function(error, info){
-  if (error) {
- console.log(error);
-  } else {
-    console.log('Email sent: ' + info.response);
-    // do something useful
-  }
-});
-if (req.body.email && otp ) {
-    await UserOTPVerification.deleteMany({email:req.body.email});
-    const userOTPVerification = await UserOTPVerification({
-        email: req.body.email,
-        otp: otp,
-       expire: Date.now() + 180000,
+    const otp = `${Math.floor(1000 + Math.random() * 9000)}`
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        host: 'smtp.gmail.com',
+        auth: {
+            user: 'harshilcbatch@gmail.com',
+            pass: 'khcbecmhdnfbfzwt'
+        }
     });
-    const result =
-        await userOTPVerification
-            .save()
-            .then((result) => {
-                console.log("otp saved successfully", result);
-                console.log("otp saved successfully");
-                resp.status(200).json("ok");
-                //sendOTPVerificationEmail(result,resp);
-            })
-            .catch((err) => {
-                resp.status(403).json({ msg: err.msg });
-            });
-} else {
-    return resp.status(404).json({ msg: "All field required" });
-}
+
+    const mailOptions = {
+        from: 'harshilcbatch@gmail.com',
+        to: req.body.email,
+        subject: 'One Time Password',
+        html: `<p>Enter </br><b>OTP:${otp}</b> </br>       in the app to verify your email address and complete the verfication</p><p>This code <b>Expires in 3 minute</b>.</p>`,
+
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+            // do something useful
+        }
+    });
+    if (req.body.email && otp) {
+        await UserOTPVerification.deleteMany({ email: req.body.email });
+        const userOTPVerification = await UserOTPVerification({
+            email: req.body.email,
+            otp: otp,
+            expire: Date.now() + 180000,
+        });
+        const result =
+            await userOTPVerification
+                .save()
+                .then((result) => {
+                    console.log("otp saved successfully", result);
+                    console.log("otp saved successfully");
+                    resp.status(200).json("ok");
+                    //sendOTPVerificationEmail(result,resp);
+                })
+                .catch((err) => {
+                    resp.status(403).json({ msg: err.msg });
+                });
+    } else {
+        return resp.status(404).json({ msg: "All field required" });
+    }
 
 
 });
 
-router.route("/verifyotp").post( async (req, resp) => {
+router.route("/verifyotp").post(async (req, resp) => {
     console.log("inside the rigestation--->>>>", req.body);
-    UserOTPVerification.findOne( { email: req.body.email },async (err, result) => {
+    UserOTPVerification.findOne({ email: req.body.email }, async (err, result) => {
         console.log("inside the rigestation--->>>>", result);
         if (err) return resp.status(500).json({ msg: err });
         if (result === null) {
@@ -170,14 +235,14 @@ router.route("/verifyotp").post( async (req, resp) => {
         if (result.otp === req.body.otp) {
             //here we will implement the jwt token functionality
             console.log(
-                new Date(result.expire).toLocaleString() ,
+                new Date(result.expire).toLocaleString(),
                 "--------",
-                 new Date().toLocaleString()
+                new Date().toLocaleString()
             )
-            if(result.expire < Date.now()) {
-                await UserOTPVerification.deleteMany({email:req.body.email});
-            //    throw new Error("Code has expired.Please request again."); 
-            return resp.status(400).json({"msg":"Code has expired.Please request again."})
+            if (result.expire < Date.now()) {
+                await UserOTPVerification.deleteMany({ email: req.body.email });
+                //    throw new Error("Code has expired.Please request again."); 
+                return resp.status(400).json({ "msg": "Code has expired.Please request again." })
             }
             let token = jwt.sign({ email: req.body.email }, config.key, {
                 expiresIn: "24h",
@@ -191,7 +256,7 @@ router.route("/verifyotp").post( async (req, resp) => {
         else {
             resp.status(403).json("password incorrect");
         }
-        
+
     }
     );
 });
@@ -219,6 +284,61 @@ router.route("/login").post((req, resp) => {
     }
     );
 })
+
+router.route("/resetpassword").post(async (req, resp) => {
+    // if(req.body.email != null && req.body.role==="Industry")
+    try {
+        let result = await User.findOne({ email: req.body.email }).lean()
+        if (result === null) {
+            return resp.status(403).json("Either email incorrect")
+        }
+        console.log("result", result.password, req.body.password);
+        if (result.password === req.body.password) {
+
+            await User.updateOne(
+                { email: req.body.email }, { $set: { password: req.body.password2 } });
+
+                resp.status(200).json("password updated succesfully");
+        }
+        else {
+            resp.status(403).json("password incorrect");
+        }
+    }
+    catch (err) {
+        console.log(err);
+    }
+
+})
+
+
+router.route("/forgetpassword").post(async (req, resp) => {
+    // if(req.body.email != null && req.body.role==="Industry")
+    try {
+        let result = await User.findOne({ email: req.body.email }).lean()
+        if (result === null) {
+            return resp.status(403).json("Either email incorrect")
+        }
+        else{  await User.updateOne(
+                { email: req.body.email }, { $set: { password: req.body.password } });
+
+                resp.status(200).json("password updated succesfully");
+    
+      
+            resp.status(200).json({msg:"password updated successfully"});}
+ 
+
+          
+
+    }
+    catch (err) {
+        console.log(err);
+    }
+
+})
+
+
+
+
 router.route("/register").post(async (req, resp) => {
     console.log("inside the rigestation--->>>>", req.body);
     // const rl =  req.body.role
@@ -277,28 +397,35 @@ router.route("/createpro").post(async (req, resp) => {
     // }
     // resp.json("registered");
 });
+
+
+
+
+
+
 router.route("/empgetdata").get(async (req, resp) => {
     console.log("=========================================")
-   let result = await EmployeeCreatePro.find()
-   return resp.json({
-    result: result,
-     });
+    let result = await EmployeeCreatePro.find()
+    return resp.json({
+        result: result,
+    });
 });
 router.route("/profileupdategetind").get(async (req, resp) => {
     console.log("=========================================")
-   let result = await IndustryCreatePro.find()
-   return resp.json({
-    result:result,
-     });
+    let result = await IndustryCreatePro.find()
+    return resp.json({
+        result: result,
+    });
 });
 
-router.route("/updateindprofile").post(async (req, resp) =>{
-     let result = await IndustryCreatePro.updateOne(//use here only update to update all data that have same name
-        {emil:req.body.email},{$set:{name:req.body.name,contact:req.body.contact,desc:req.body.desc,address:req.body.address,timefrom:req.body.timefrom,timeto:req.body.timeto}}
+router.route("/updateindprofile").post(async (req, resp) => {
+    console.log("inside the create profile--->>>>", req.body);
+    let result = await IndustryCreatePro.updateOne(//use here only update to update all data that have same name
+        { email: req.body.email }, { $set: { name: req.body.name, contact: req.body.contact, desc: req.body.desc, address: req.body.address, timefrom: req.body.timefrom, timeto: req.body.timeto } }
     )
     return resp.json({
         result: result,
-         });
+    });
 });
 router.route("/addpost").post(async (req, resp) => {
     console.log("inside the create profile--->>>>", req.body);
@@ -311,6 +438,45 @@ router.route("/addpost").post(async (req, resp) => {
 
         if (req.body.name && req.body.contact && req.body.email && req.body.desc && req.body.address && req.body.timefrom && req.body.timeto && req.body.salary && req.body.reqworker && req.body.noworker && req.body.jobtype) {
             const addpost = await new AddPost(req.body).save();
+            return resp.status(200).json("ok");
+        }
+        return resp.status(404).json({ msg: "all field require" });
+    } catch (error) {
+        console.log(error, "error");
+    }
+    // } else if(req.body.name==null) {
+    //     return resp.status(404).json({ msg: "name required" });
+    // }
+    // else if(req.body.timefrom || req.body.timeto==null) {
+    //     return resp.status(404).json({ msg: "time required" });
+    // }
+    // else if(req.body.contact==null) {
+    //     return resp.status(404).json({ msg: "contact required" });
+    // }
+    // else if(req.body.email==null) {
+    //     return resp.status(404).json({ msg: "email required" });
+    // }
+    // else if(req.body.address==null) {
+    //     return resp.status(404).json({ msg: "address required" });
+    // }
+    // else if(req.body.desc==null) {
+    //     return resp.status(404).json({ msg: "desc required" });
+    // }
+    // resp.json("registered");
+});
+
+
+router.route("/applied").post(async (req, resp) => {
+    console.log("inside the create profile--->>>>", req.body);
+    try {
+        // if(typeof req.body.reqworker === "string") 
+        // // convert skill to array
+        // req.body.reqworker = JSON.parse(req.body.reqworker);
+
+        console.log("inside the create profile--->>>>", req.body);
+
+        if (req.body.name && req.body.contact && req.body.email && req.body.desc && req.body.address && req.body.timefrom && req.body.timeto && req.body.salary && req.body.reqworker && req.body.noworker && req.body.jobtype && req.body.contactemp) {
+            const applied = await new Applied(req.body).save();
             return resp.status(200).json("ok");
         }
         return resp.status(404).json({ msg: "all field require" });
@@ -418,15 +584,16 @@ router.route("/addpost").post(async (req, resp) => {
 
 router.route("/empgetdata").get(async (req, resp) => {
     console.log("=========================================")
-   let result = await EmployeeCreatePro.find()
-   return resp.json({
-    result: result,
-     });
+    let result = await EmployeeCreatePro.find()
+    return resp.json({
+        result: result,
+    });
 });
 
 router.route("/profilegetind/:mail").get(async (req, resp) => {
+    
     // clogconsole.log("=========================================")
-   let result = await  IndustryCreatePro.findOne({ email: req.params.mail });
+    let result = await IndustryCreatePro.findOne({ email: req.params.mail });
     return resp.json({
         result: result,
     });
@@ -439,6 +606,26 @@ router.route("/profilegetind/:mail").get(async (req, resp) => {
 
     // return resp.status(500).json({ msg: user });
 });
+
+
+router.route("/getjoindata/:emailind").get(async (req, resp) => {
+    
+    // clogconsole.log("=========================================")
+    let result = await JoinData.find({ emailind: req.params.emailind });
+    return resp.json({
+        result: result,
+    });
+    // let { username } = req.params;
+
+    // console.log(username);
+    // let user = await User.findOne({ username }).lean()
+
+    // console.log(user)
+
+    // return resp.status(500).json({ msg: user });
+});
+
+
 
 router.route("/update/:username").patch((req, resp) => {
     User.findOneAndUpdate(

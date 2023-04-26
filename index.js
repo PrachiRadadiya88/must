@@ -29,6 +29,6 @@ app.get('/', (req, resp) => {
     resp.json("first api")
 })
 
-app.listen(PORT, () => {
-    console.log("server is running on port " + PORT);
+app.listen(4600, () => {
+    console.log("server is running on port " + 4600);
 })
